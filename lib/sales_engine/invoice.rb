@@ -10,9 +10,14 @@ module SalesEngine
     end
 
     def self.get_invoices
-      CSVManager.load('data/invoices.csv').collect do |record|
+      results = CSVManager.load('data/invoices.csv').collect do |record|
         Invoice.new(record)
       end
+      return_hash = {}
+      results.each do |result|
+        return_hash[result.id] = result
+      end
+      return_hash
     end
 
     # def self.csv_headers
@@ -31,12 +36,12 @@ module SalesEngine
           invoice_id: new_invoice.id, created_at: DateTime.now.to_s,
           quantity: 1, unit_price: (item.unit_price*100).to_s } )
       end
-      records << new_invoice
+      records[new_invoice.id] = new_invoice
       new_invoice
     end
 
     def self.set_new_invoice_attributes(new_invoice, invoice_attributes)
-      new_invoice.id = records.last.id + 1
+      new_invoice.id = all.last.id + 1
       new_invoice.customer_id = invoice_attributes[:customer].id
       new_invoice.merchant_id = invoice_attributes[:merchant].id
       new_invoice.status = invoice_attributes[:status]

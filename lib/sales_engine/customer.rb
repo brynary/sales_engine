@@ -18,9 +18,14 @@ module SalesEngine
     # end
 
     def self.get_customers
-      CSVManager.load('data/customers.csv').collect do |record|
+      results = CSVManager.load('data/customers.csv').collect do |record|
         Customer.new(record)
       end
+      return_hash = {}
+      results.each do |result|
+        return_hash[result.id] = result
+      end
+      return_hash
     end
 
     def self.most_items

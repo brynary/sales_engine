@@ -10,9 +10,14 @@ module SalesEngine
     end
 
     def self.get_items
-      CSVManager.load('data/items.csv').collect do |record|
+      results = CSVManager.load('data/items.csv').collect do |record|
         Item.new(record)
       end
+      return_hash = {}
+      results.each do |result|
+        return_hash[result.id] = result
+      end
+      return_hash
     end
 
     # def self.csv_headers

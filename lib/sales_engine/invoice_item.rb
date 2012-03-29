@@ -10,9 +10,14 @@ module SalesEngine
     end
 
     def self.get_invoice_items
-      CSVManager.load('data/invoice_items.csv').map do |record|
+      results = CSVManager.load('data/invoice_items.csv').map do |record|
         InvoiceItem.new(record)
       end
+      return_hash = {}
+      results.each do |result|
+        return_hash[result.id] = result
+      end
+      return_hash
     end
 
     # def self.csv_headers
@@ -24,11 +29,11 @@ module SalesEngine
     # end
 
     def self.create(params)
-      records << self.new(params)
+      records[params[:id]] = self.new(params)
     end
 
     def self.populate_stats
-      records.each do |record|
+      all.each do |record|
         record.populate_stats if record.invoice.successful_transaction
       end
     end

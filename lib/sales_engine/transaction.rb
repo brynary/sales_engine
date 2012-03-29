@@ -10,9 +10,14 @@ module SalesEngine
     end
 
     def self.get_transactions
-      CSVManager.load('data/transactions.csv').collect do |record|
+      results = CSVManager.load('data/transactions.csv').collect do |record|
         Transaction.new(record)
       end
+      return_hash = {}
+      results.each do |result|
+        return_hash[result.id] = result
+      end
+      return_hash
     end
 
     # def self.csv_headers
@@ -25,8 +30,8 @@ module SalesEngine
 
     def self.create(params)
       t = self.new(params)
-      t.id = records.last.id + 1
-      records << t
+      t.id = all.last.id + 1
+      records[t.id] = t
     end
 
     def initialize(raw_line)

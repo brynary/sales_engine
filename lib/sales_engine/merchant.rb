@@ -17,9 +17,14 @@ module SalesEngine
     # end
 
     def self.get_merchants
-      CSVManager.load('data/merchants.csv').collect do |record|
+      results = CSVManager.load('data/merchants.csv').collect do |record|
         Merchant.new(record)
       end
+      return_hash = {}
+      results.each do |result|
+        return_hash[result.id] = result
+      end
+      return_hash
     end
 
     def self.most_revenue(num_merchants)
@@ -98,7 +103,7 @@ module SalesEngine
       results = []
       invoices.map(&:customer_id).uniq.each do |cid|
         customer = SalesEngine::Customer.find_by_id(cid)
-        results << customer if customer.has_pending_invoices?(self.id)
+        results[cid] = customer if customer.has_pending_invoices?(self.id)
       end
       results
     end
