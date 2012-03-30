@@ -1,5 +1,8 @@
 source :rubygems
-gem 'hashyhash', :git => 'git://github.com/marktabler/hashyhash.git'
+
+group :test, :development, :production do
+  gem 'hashyhash', :git => 'git://github.com/marktabler/hashyhash.git'
+end
 
 group :test, :development do
   gem 'rspec'
