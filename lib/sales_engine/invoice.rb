@@ -52,9 +52,7 @@ module SalesEngine
     end
 
     def self.average_revenue(date = nil)
-      invoices = date ? with_date(date) : all
-      tr = invoices.map(&:total_paid).inject(:+)
-      BigDecimal(tr / invoices.size.to_f).round(2)
+      average(:total_paid, date)
     end
 
     def self.with_date(date)
@@ -65,8 +63,12 @@ module SalesEngine
     end
 
     def self.average_items(date = nil)
+      average(:num_items, date)
+    end
+
+    def self.average(method_name, date = nil)
       invoices = date ? with_date(date) : all
-      tr = invoices.map(&:num_items).inject(:+)
+      tr = invoices.map { |i| i.send(method_name) }.inject(:+)
       BigDecimal(tr / invoices.size.to_f).round(2)
     end
 
