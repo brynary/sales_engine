@@ -52,15 +52,15 @@ module SalesEngine
     end
 
     def self.average_revenue(date = nil)
-      if date
-        di = all.select do |i|
-          next unless i.successful_transaction
-          i.created_at.strftime("%y%m%d") == date.strftime("%y%m%d")
-        end
-        tr = di.map(&:total_paid).inject(:+)
-        BigDecimal((tr / di.size.to_f).round(2).to_s) rescue BigDecimal("0")
-      else
-        BigDecimal((all.map(&:total_paid).inject(:+) / suc_size).round(2).to_s)
+      invoices = date ? with_date(date) : all
+      tr = invoices.map(&:total_paid).inject(:+)
+      BigDecimal(tr / invoices.size.to_f).round(2)
+    end
+
+    def self.with_date(date)
+      all.select do |i|
+        next unless i.successful_transaction
+        i.created_at.strftime("%y%m%d") == date.strftime("%y%m%d")
       end
     end
 
