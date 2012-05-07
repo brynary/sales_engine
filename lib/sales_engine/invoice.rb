@@ -65,16 +65,9 @@ module SalesEngine
     end
 
     def self.average_items(date = nil)
-      if date
-        di = all.select do |i|
-          next unless i.successful_transaction
-          i.created_at.strftime("%y%m%d") == date.strftime("%y%m%d")
-        end
-        ti = di.map(&:num_items).inject(:+)
-        BigDecimal((ti / di.size.to_f).round(2).to_s) rescue BigDecimal("0")
-      else
-        BigDecimal((all.map(&:num_items).inject(:+) / suc_size).round(2).to_s)
-      end
+      invoices = date ? with_date(date) : all
+      tr = invoices.map(&:num_items).inject(:+)
+      BigDecimal(tr / invoices.size.to_f).round(2)
     end
 
     def self.suc_size
